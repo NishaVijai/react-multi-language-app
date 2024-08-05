@@ -17,7 +17,7 @@ i18n
   .use(HttpApi)
   .init({
     load: "languageOnly",
-    supportedLngs: ["en", "fr", "ar"],
+    supportedLngs: ["en", "fr", "ar", "ur"],
     // the translations
     // (tip move them in a JSON file and import them,
     // or even better, manage them via a UI: https://react.i18next.com/guides/multiple-translation-files#manage-your-translations-with-a-management-gui)
