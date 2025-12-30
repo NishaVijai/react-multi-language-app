@@ -53,7 +53,7 @@ const GlobeIcon = ({ width = 24, height = 24 }) => (
 
 function App() {
   const [userText, setUserText] = useState("");
-  const [translations, setTranslations] = useState({});
+  const [translatedText, setTranslatedText] = useState("");
   const [loading, setLoading] = useState(false);
 
   const currentLanguageCode = cookies.get("i18next") || "en";
@@ -71,30 +71,35 @@ function App() {
     document.title = t("app_title");
   }, [currentLanguage, t]);
 
-  const translateText = async (text) => {
+  useEffect(() => {
+    if (userText.trim()) {
+      translateText(userText, currentLanguageCode);
+    } else {
+      setTranslatedText("");
+    }
+  }, [currentLanguageCode]);
+
+  const translateText = async (text, targetLang) => {
     if (!text.trim()) {
-      setTranslations({});
+      setTranslatedText("");
+      return;
+    }
+
+    if (targetLang === "en") {
+      setTranslatedText(text);
+      setLoading(false);
       return;
     }
 
     setLoading(true);
-    const newTranslations = {};
-
     try {
-      for (const lang of languages) {
-        if (lang.code === "en") {
-          newTranslations[lang.code] = text;
-        } else {
-          const response = await fetch(
-            `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${lang.code}`
-          );
-          const data = await response.json();
-          if (data.responseData && data.responseData.translatedText) {
-            newTranslations[lang.code] = data.responseData.translatedText;
-          }
-        }
+      const response = await fetch(
+        `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}`
+      );
+      const data = await response.json();
+      if (data.responseData && data.responseData.translatedText) {
+        setTranslatedText(data.responseData.translatedText);
       }
-      setTranslations(newTranslations);
     } catch (error) {
       console.error("Translation error:", error);
     } finally {
@@ -150,35 +155,16 @@ function App() {
               value={userText}
               onChange={(e) => {
                 setUserText(e.target.value);
-                translateText(e.target.value);
+                translateText(e.target.value, currentLanguageCode);
               }}
             />
           </div>
 
           {loading && <p className="text-muted">Translating...</p>}
 
-          {Object.keys(translations).length > 0 && (
-            <div className="mt-4">
-              <h5>Translations:</h5>
-              <div className="row">
-                {languages.map((lang) => (
-                  <div key={lang.code} className="col-md-6 mb-3">
-                    <div className="card">
-                      <div className="card-body">
-                        <h6 className="card-title">
-                          <span
-                            className={`flag-icon flag-icon-${lang.country_code} mx-2`}
-                          ></span>
-                          {lang.name}
-                        </h6>
-                        <p className="card-text">
-                          {translations[lang.code] || "-"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+          {translatedText && (
+            <div className="mt-3 p-3 border rounded bg-light">
+              <p className="mb-0">{translatedText}</p>
             </div>
           )}
         </div>
