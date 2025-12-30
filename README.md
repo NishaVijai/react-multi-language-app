@@ -2,7 +2,7 @@
 MultiLang Translator is a web application that enables real-time translation of user-input text into multiple languages using a simple and intuitive interface.
 
 ## Preview link
-- https://vvkhfy.csb.app/
+multi-lang-translator.netlify.app/
 
 ## Screenshot
-![react-multi-language-app](https://github.com/NishaVijai/react-multi-language-app/assets/26595961/76dde941-0cef-463f-a1bc-9a64672d7d3b)
+<img width="3840" height="1960" alt="Titre" src="https://github.com/user-attachments/assets/248aeeb2-dd99-4689-8f4c-690eccf2674e" />
