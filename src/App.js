@@ -109,13 +109,24 @@ function App() {
 
   return (
     <div className="container">
-      <div className="d-flex justify-content-end">
+      <div className="d-flex justify-content-end align-items-center mb-4">
+        <div className="me-3">
+          <small className="text-muted">Current Language:</small>
+          <p className="mb-0">
+            <span
+              className={`flag-icon flag-icon-${currentLanguage.country_code} me-2`}
+              style={{ fontSize: "20px" }}
+            ></span>
+            <strong>{currentLanguage.name}</strong>
+          </p>
+        </div>
         <div className="dropdown">
           <button
             className="btn btn-link dropdown-toggle"
             type="button"
             data-bs-toggle="dropdown"
             aria-expanded="false"
+            title="Change Language"
           >
             <GlobeIcon />
           </button>
