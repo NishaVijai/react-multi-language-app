@@ -146,7 +146,7 @@ function App() {
         <p>{t("days_since_release", { number_of_days })}</p>
 
         <div className="mt-5 w-100">
-          <h4 className="mb-3">Text Translator</h4>
+          <h2 className="mb-3">Text Translator</h2>
           <div className="mb-3">
             <input
               type="text"
@@ -162,11 +162,12 @@ function App() {
 
           {loading && <p className="text-muted">Translating...</p>}
 
-          {translatedText && (
-            <div className="mt-3 p-3 border rounded bg-light">
+          <div className="mt-3 p-3 border rounded bg-light">
+            <h3>Translated text</h3>
+            {translatedText ? (
               <p className="mb-0">{translatedText}</p>
-            </div>
-          )}
+            ) : <p className="mb-0">Please type a text to translate...</p>}
+          </div>
         </div>
       </div>
     </div>
