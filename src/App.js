@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import cookies from "js-cookie";
@@ -19,6 +19,22 @@ const languages = [
     name: "عربي",
     country_code: "sa",
     dir: "rtl"
+  },
+  {
+    code: "da",
+    name: "Dansk",
+    country_code: "dk"
+  },
+  {
+    code: "es",
+    name: "Español",
+    country_code: "es"
+  },
+  {
+    code: "hi",
+    name: "हिन्दी",
+    country_code: "in",
+    dir: "ltr"
   }
 ];
 
@@ -36,6 +52,10 @@ const GlobeIcon = ({ width = 24, height = 24 }) => (
 );
 
 function App() {
+  const [userText, setUserText] = useState("");
+  const [translations, setTranslations] = useState({});
+  const [loading, setLoading] = useState(false);
+
   const currentLanguageCode = cookies.get("i18next") || "en";
   const currentLanguage = languages.find(
     (lang) => lang.code === currentLanguageCode
@@ -50,6 +70,37 @@ function App() {
     document.body.dir = currentLanguage.dir || "ltr";
     document.title = t("app_title");
   }, [currentLanguage, t]);
+
+  const translateText = async (text) => {
+    if (!text.trim()) {
+      setTranslations({});
+      return;
+    }
+
+    setLoading(true);
+    const newTranslations = {};
+
+    try {
+      for (const lang of languages) {
+        if (lang.code === "en") {
+          newTranslations[lang.code] = text;
+        } else {
+          const response = await fetch(
+            `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${lang.code}`
+          );
+          const data = await response.json();
+          if (data.responseData && data.responseData.translatedText) {
+            newTranslations[lang.code] = data.responseData.translatedText;
+          }
+        }
+      }
+      setTranslations(newTranslations);
+    } catch (error) {
+      console.error("Translation error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="container">
@@ -88,6 +139,49 @@ function App() {
       <div className="d-flex flex-column align-items-start">
         <h1 className="font-weight-normal mb-3">{t("welcome_message")}</h1>
         <p>{t("days_since_release", { number_of_days })}</p>
+
+        <div className="mt-5 w-100">
+          <h4 className="mb-3">Text Translator</h4>
+          <div className="mb-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter text to translate..."
+              value={userText}
+              onChange={(e) => {
+                setUserText(e.target.value);
+                translateText(e.target.value);
+              }}
+            />
+          </div>
+
+          {loading && <p className="text-muted">Translating...</p>}
+
+          {Object.keys(translations).length > 0 && (
+            <div className="mt-4">
+              <h5>Translations:</h5>
+              <div className="row">
+                {languages.map((lang) => (
+                  <div key={lang.code} className="col-md-6 mb-3">
+                    <div className="card">
+                      <div className="card-body">
+                        <h6 className="card-title">
+                          <span
+                            className={`flag-icon flag-icon-${lang.country_code} mx-2`}
+                          ></span>
+                          {lang.name}
+                        </h6>
+                        <p className="card-text">
+                          {translations[lang.code] || "-"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

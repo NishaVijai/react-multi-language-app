@@ -1,0 +1,6 @@
+{
+  "app_title": "Título",
+  "language": "Idioma",
+  "welcome_message": "Bienvenido",
+  "days_since_release": "han pasado {{number_of_days}} días desde que se lanzó este video"
+}
