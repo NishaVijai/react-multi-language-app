@@ -1,5 +1,5 @@
 # react-multi-language-app
-Created with CodeSandbox
+MultiLang Translator is a web application that enables real-time translation of user-input text into multiple languages using a simple and intuitive interface.
 
 ## Preview link
 - https://vvkhfy.csb.app/
