@@ -4,7 +4,7 @@
 ![i18next](https://img.shields.io/badge/i18next-internationalization-success)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
 
-## 🚀 Description
+## Description
 
 **React Multi-Language App** is a **React application** demonstrating **multi-language support and dynamic language switching**. The app is built with **i18next internationalization library** and supports switching between languages in real time. It was created with **CodeSandbox** and focuses on clean structure, reusable components, and a simple localization setup.
 
@@ -12,7 +12,7 @@ This project is ideal as a **starter template for multilingual React apps**, use
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
 * [Preview](#preview)
 * [Screenshot](#screenshot)
@@ -21,13 +21,12 @@ This project is ideal as a **starter template for multilingual React apps**, use
 * [Installation](#installation)
 * [Usage](#usage)
 * [Project Structure](#project-structure)
-* [Contributing](#contributing)
 * [Deployment](#deployment)
 * [License](#license)
 
 ---
 
-## 🔍 Preview
+## Preview
 
 **Live Demo:**  
 🔗https://multi-lang-translator.netlify.app/
@@ -40,7 +39,7 @@ This project is ideal as a **starter template for multilingual React apps**, use
 
 ---
 
-## ✨ Features
+## Features
 
 * 🌐 **Multi-Language Support** – Support for multiple languages with dynamic switching.
 * 🔁 **Real-Time Language Change** – Switch languages without reloading the page.
@@ -51,7 +50,7 @@ This project is ideal as a **starter template for multilingual React apps**, use
 
 ---
 
-## 🛠 Technologies Used
+## Technologies Used
 
 This project is built with the following core technologies:
 
@@ -62,7 +61,7 @@ This project is built with the following core technologies:
 
 ---
 
-## 🧑‍💻 Installation
+## Installation
 
 To run this project locally:
 
@@ -95,7 +94,7 @@ To run this project locally:
 
 ---
 
-## 🧭 Usage
+## Usage
 
 Once running, the app will display UI text in the default language.
 
@@ -104,7 +103,7 @@ Once running, the app will display UI text in the default language.
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 react-multi-language-app/
@@ -123,19 +122,6 @@ react-multi-language-app/
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome! If you’d like to:
-
-* Add more language support
-* Improve UI/UX
-* Refactor components
-* Add tests
-
-…feel free to open issues or submit a pull request.
-
----
-
 ## Deployment
 
 The project is deployed using **Netlify**.
@@ -150,6 +136,6 @@ Netlify will automatically rebuild and publish the site.
 
 ---
 
-## 📜 License
+## License
 
 This project is **open-source** and free to use for personal or educational purposes.
