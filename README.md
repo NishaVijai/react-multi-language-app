@@ -21,7 +21,7 @@ This project is ideal as a **starter template for multilingual React apps**, use
 * [Installation](#installation)
 * [Usage](#usage)
 * [Project Structure](#project-structure)
-* [Deployment (Netlify + GitHub)](#Deployment (Netlify + GitHub))
+* [Deployment](#Deployment)
 * [License](#license)
 
 ---
@@ -122,7 +122,7 @@ react-multi-language-app/
 
 ---
 
-## Deployment (Netlify + GitHub)
+## Deployment
 
 This project is deployed using **Netlify with GitHub continuous deployment**.
 
