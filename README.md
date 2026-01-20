@@ -21,7 +21,8 @@ This project is ideal as a **starter template for multilingual React apps**, use
 * [Installation](#installation)
 * [Usage](#usage)
 * [Project Structure](#project-structure)
-* [Deployment](#deployment)
+* [Build](#Build)
+* [Deployment (Netlify + GitHub)](#Deployment)
 * [License](#license)
 
 ---
@@ -122,17 +123,55 @@ react-multi-language-app/
 
 ---
 
-## Deployment
+## Build (Production)
 
-The project is deployed using **Netlify**.
-
-To deploy updates:
+To create a **production-ready build**, run:
 
 ```bash
+npm run build
+```
+
+This command:
+
+* Optimizes the app for production
+* Generates a static `build/` folder
+* Minifies files and improves performance
+
+⚠️ The `build/` folder is **not committed to GitHub**. Netlify will generate it automatically during deployment.
+
+---
+
+## Deployment (Netlify + GitHub)
+
+This project is deployed using **Netlify with GitHub continuous deployment**.
+
+### How it works
+
+1. The repository is connected to **Netlify**
+2. On every push to the `main` branch:
+
+   * Netlify runs `npm install`
+   * Netlify runs `npm run build`
+   * Netlify publishes the app from the `build/` directory
+
+### Netlify Build Settings
+
+| Setting               | Value           |
+| --------------------- | --------------- |
+| **Build Command**     | `npm run build` |
+| **Publish Directory** | `build`         |
+
+### Deploying Updates
+
+To deploy new changes:
+
+```bash
+git add .
+git commit -m "Update app"
 git push origin main
 ```
 
-Netlify will automatically rebuild and publish the site.
+✅ Netlify will **automatically build and redeploy** the latest version from the GitHub repository.
 
 ---
 
