@@ -21,8 +21,7 @@ This project is ideal as a **starter template for multilingual React apps**, use
 * [Installation](#installation)
 * [Usage](#usage)
 * [Project Structure](#project-structure)
-* [Build](#Build)
-* [Deployment (Netlify + GitHub)](#Deployment)
+* [Deployment](#Deployment)
 * [License](#license)
 
 ---
@@ -120,24 +119,6 @@ react-multi-language-app/
 ├── package.json            # Dependencies & scripts
 └── README.md               # This documentation
 ```
-
----
-
-## Build (Production)
-
-To create a **production-ready build**, run:
-
-```bash
-npm run build
-```
-
-This command:
-
-* Optimizes the app for production
-* Generates a static `build/` folder
-* Minifies files and improves performance
-
-⚠️ The `build/` folder is **not committed to GitHub**. Netlify will generate it automatically during deployment.
 
 ---
 
