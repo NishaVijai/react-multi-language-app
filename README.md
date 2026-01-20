@@ -68,30 +68,30 @@ To run this project locally:
 
 1. **Clone the repository**
 
-   ```bash
+```bash
    git clone <repository-url>
    cd react-multi-language-app
 ````
 
 2. **Install dependencies**
 
-   ```bash
+```bash
    npm install
-   ```
+```
 
 3. **Start the development server**
 
-   ```bash
+```bash
    npm start
-   ```
+```
 
 4. **Open in browser**
 
    The app will usually run on:
 
-   ```
+```
    http://localhost:3000
-   ```
+```
 
 ---
 
