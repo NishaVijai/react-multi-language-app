@@ -6,7 +6,7 @@
 
 ## 🚀 Description
 
-**React Multi-Language App** is a **React application** demonstrating **multi-language support and dynamic language switching**. The app is built with **i18next internationalization library** and supports switching between languages in real time. It was created with **CodeSandbox** and focuses on clean structure, reusable components, and a simple localization setup. :contentReference[oaicite:0]{index=0}
+**React Multi-Language App** is a **React application** demonstrating **multi-language support and dynamic language switching**. The app is built with **i18next internationalization library** and supports switching between languages in real time. It was created with **CodeSandbox** and focuses on clean structure, reusable components, and a simple localization setup.
 
 This project is ideal as a **starter template for multilingual React apps**, useful for learning internationalization (i18n) with JSON language resources and React hooks.
 
@@ -44,7 +44,7 @@ This project is ideal as a **starter template for multilingual React apps**, use
 
 * 🌐 **Multi-Language Support** – Support for multiple languages with dynamic switching.
 * 🔁 **Real-Time Language Change** – Switch languages without reloading the page.
-* 🧠 **i18next Integration** – Uses industry-standard internationalization library for React. :contentReference[oaicite:1]{index=1}
+* 🧠 **i18next Integration** – Uses industry-standard internationalization library for React.
 * 📦 **JSON Translation Files** – Easy to extend with additional languages.
 * 🧩 **Reusable Components** – Designed for clean, scalable component structure.
 * 🚀 **Instant Preview via CodeSandbox** – No local setup required.
@@ -56,7 +56,7 @@ This project is ideal as a **starter template for multilingual React apps**, use
 This project is built with the following core technologies:
 
 * **React** – Frontend library for building UI components.
-* **i18next + react-i18next** – Internationalization framework for managing translations. :contentReference[oaicite:2]{index=2}
+* **i18next + react-i18next** – Internationalization framework for managing translations.
 * **JavaScript** – Language used throughout the app.
 * **CSS** – For basic styling.
 
