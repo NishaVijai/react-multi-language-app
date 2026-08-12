@@ -61,6 +61,50 @@ const GlobeIcon = ({ width = 24, height = 24 }) => (
   </svg>
 );
 
+// The MyMemory free API sometimes returns contaminated results from its public
+// translation memory (e.g. "how are you" -> "je m'appelle Jayhow are you").
+// We filter out echoes/contaminated entries and pick the best clean match.
+function pickBestTranslation(data, originalText) {
+  const originalLower = originalText.trim().toLowerCase();
+
+  const candidates = [];
+  if (data.responseData && data.responseData.translatedText) {
+    candidates.push({
+      text: data.responseData.translatedText,
+      match: Number(data.responseData.match) || 0,
+      quality: Number(data.responseData.quality) || 0
+    });
+  }
+  if (Array.isArray(data.matches)) {
+    data.matches.forEach((m) => {
+      if (m && m.translation) {
+        candidates.push({
+          text: m.translation,
+          match: Number(m.match) || 0,
+          quality: Number(m.quality) || 0
+        });
+      }
+    });
+  }
+
+  // Drop entries that still contain the original English phrase (echo /
+  // contaminated result) and empty strings.
+  const clean = candidates.filter((c) => {
+    const t = c.text.trim().toLowerCase();
+    return t !== "" && t !== originalLower && !t.includes(originalLower);
+  });
+
+  if (clean.length === 0) return null;
+
+  // Prefer higher translation quality, then higher match score.
+  clean.sort((a, b) => {
+    if (b.quality !== a.quality) return b.quality - a.quality;
+    return b.match - a.match;
+  });
+
+  return clean[0].text;
+}
+
 function App() {
   const [userText, setUserText] = useState("");
   const [translatedText, setTranslatedText] = useState("");
@@ -107,12 +151,15 @@ function App() {
         { signal: controller.signal }
       );
       const data = await response.json();
-      if (data.responseData && data.responseData.translatedText) {
-        setTranslatedText(data.responseData.translatedText);
+      const best = pickBestTranslation(data, text);
+      if (best) {
+        setTranslatedText(best);
         setError("");
       } else {
         setTranslatedText("");
-        setError(data.responseDetails || "No translation received.");
+        setError(
+          "The translation service did not return a reliable result. Please try a different word or phrase."
+        );
       }
     } catch (err) {
       // Ignore aborted requests — a newer text/language superseded this one.
