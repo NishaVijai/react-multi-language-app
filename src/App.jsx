@@ -1,42 +1,52 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
-import cookies from "js-cookie";
 
 const languages = [
   {
     code: "fr",
     name: "Français",
-    country_code: "fr"
+    flag: "/flags/fr.svg"
   },
   {
     code: "en",
     name: "English",
-    country_code: "gb"
+    flag: "/flags/gb.svg"
   },
   {
     code: "ar",
     name: "عربي",
-    country_code: "sa",
+    flag: "/flags/sa.svg",
     dir: "rtl"
   },
   {
     code: "da",
     name: "Dansk",
-    country_code: "dk"
+    flag: "/flags/dk.svg"
   },
   {
     code: "es",
     name: "Español",
-    country_code: "es"
+    flag: "/flags/es.svg"
   },
   {
     code: "hi",
     name: "हिन्दी",
-    country_code: "in",
+    flag: "/flags/in.svg",
     dir: "ltr"
   }
 ];
+
+const FlagIcon = ({ src, alt, size = 20, opacity = 1 }) => (
+  <img
+    src={src}
+    alt={alt}
+    width={size}
+    height={size * 0.75}
+    style={{ opacity }}
+    className="me-2"
+  />
+);
 
 const GlobeIcon = ({ width = 24, height = 24 }) => (
   <svg
@@ -55,57 +65,121 @@ function App() {
   const [userText, setUserText] = useState("");
   const [translatedText, setTranslatedText] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const currentLanguageCode = cookies.get("i18next") || "en";
-  const currentLanguage = languages.find(
-    (lang) => lang.code === currentLanguageCode
-  );
+  const { t, i18n } = useTranslation();
 
-  const { t } = useTranslation();
+  // IMPORTANT: read the active language from i18next's reactive state, NOT from
+  // the cookie. Reading the cookie during render can return a stale value in the
+  // same render cycle as a language switch (i18next updates its internal state
+  // and notifies React before the browser-language-detector writes the cookie),
+  // which previously left the translator stuck on the old language.
+  const currentLanguageCode = i18n.language || "en";
+  const currentLanguage =
+    languages.find((lang) => lang.code === currentLanguageCode) ||
+    languages.find((lang) => lang.code === "en");
+
   const releaseDate = new Date("2021-03-07");
   const timedifference = new Date() - releaseDate;
   const number_of_days = Math.floor(timedifference / (1000 * 60 * 60 * 24));
+
+  // Used to cancel stale translation requests (race-condition protection) and
+  // to debounce typing so we don't fire one API call per keystroke.
+  const abortRef = useRef(null);
+  const debounceRef = useRef(null);
 
   useEffect(() => {
     document.body.dir = currentLanguage.dir || "ltr";
     document.title = t("app_title");
   }, [currentLanguage, t]);
 
-  useEffect(() => {
-    if (userText.trim()) {
-      translateText(userText, currentLanguageCode);
-    } else {
-      setTranslatedText("");
+  const translateText = useCallback(async (text, targetLang) => {
+    // Cancel any request still in flight for older text/language.
+    if (abortRef.current) {
+      abortRef.current.abort();
     }
-  }, [currentLanguageCode]);
+    const controller = new AbortController();
+    abortRef.current = controller;
 
-  const translateText = async (text, targetLang) => {
-    if (!text.trim()) {
+    try {
+      const response = await fetch(
+        `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}`,
+        { signal: controller.signal }
+      );
+      const data = await response.json();
+      if (data.responseData && data.responseData.translatedText) {
+        setTranslatedText(data.responseData.translatedText);
+        setError("");
+      } else {
+        setTranslatedText("");
+        setError(data.responseDetails || "No translation received.");
+      }
+    } catch (err) {
+      // Ignore aborted requests — a newer text/language superseded this one.
+      if (err.name === "AbortError") return;
+      console.error("Translation error:", err);
+      setError("Translation failed. Please try again.");
+    } finally {
+      if (abortRef.current === controller) {
+        abortRef.current = null;
+        setLoading(false);
+      }
+    }
+  }, []);
+
+  // Single source of truth for translation:
+  //  - typing new text  -> re-translates in the current language
+  //  - switching language via the globe -> re-translates existing text
+  useEffect(() => {
+    const trimmed = userText.trim();
+
+    // Invalidate any in-flight request for previous text/language.
+    if (abortRef.current) {
+      abortRef.current.abort();
+      abortRef.current = null;
+    }
+
+    if (!trimmed) {
       setTranslatedText("");
+      setError("");
+      setLoading(false);
       return;
     }
 
-    if (targetLang === "en") {
-      setTranslatedText(text);
+    // English is the source language of the translator — just echo the input.
+    if (currentLanguageCode === "en") {
+      setTranslatedText(trimmed);
+      setError("");
       setLoading(false);
       return;
     }
 
     setLoading(true);
-    try {
-      const response = await fetch(
-        `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}`
-      );
-      const data = await response.json();
-      if (data.responseData && data.responseData.translatedText) {
-        setTranslatedText(data.responseData.translatedText);
+    setError("");
+    debounceRef.current = setTimeout(
+      () => translateText(trimmed, currentLanguageCode),
+      350
+    );
+
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+        debounceRef.current = null;
       }
-    } catch (error) {
-      console.error("Translation error:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+  }, [userText, currentLanguageCode, translateText]);
+
+  // Cleanup on unmount.
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+      if (abortRef.current) {
+        abortRef.current.abort();
+      }
+    };
+  }, []);
 
   return (
     <div className="container">
@@ -113,10 +187,7 @@ function App() {
         <div className="me-3">
           <small className="text-muted">Current Language:</small>
           <p className="mb-0">
-            <span
-              className={`flag-icon flag-icon-${currentLanguage.country_code} me-2`}
-              style={{ fontSize: "20px" }}
-            ></span>
+            <FlagIcon src={currentLanguage.flag} alt={currentLanguage.name} />
             <strong>{currentLanguage.name}</strong>
           </p>
         </div>
@@ -134,17 +205,18 @@ function App() {
             <li>
               <span className="dropdown-item-text">{t("language")}</span>
             </li>
-            {languages.map(({ code, name, country_code }) => (
-              <li key={country_code}>
+            {languages.map(({ code, name, flag }) => (
+              <li key={code}>
                 <button
                   className="dropdown-item"
                   onClick={() => i18next.changeLanguage(code)}
                   disabled={code === currentLanguageCode}
                 >
-                  <span
-                    className={`flag-icon flag-icon-${country_code} mx-2`}
-                    style={{ opacity: code === currentLanguageCode ? 0.5 : 1 }}
-                  ></span>
+                  <FlagIcon
+                    src={flag}
+                    alt={name}
+                    opacity={code === currentLanguageCode ? 0.5 : 1}
+                  />
                   {name}
                 </button>
               </li>
@@ -164,14 +236,12 @@ function App() {
               className="form-control"
               placeholder="Enter text to translate..."
               value={userText}
-              onChange={(e) => {
-                setUserText(e.target.value);
-                translateText(e.target.value, currentLanguageCode);
-              }}
+              onChange={(e) => setUserText(e.target.value)}
             />
           </div>
 
           {loading && <p className="text-muted">Translating...</p>}
+          {error && <p className="text-danger">{error}</p>}
 
           <div className="mt-3 p-3 border rounded bg-light">
             <h3>Translated text</h3>

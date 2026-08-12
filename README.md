@@ -2,13 +2,16 @@
 
 ![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)
 ![i18next](https://img.shields.io/badge/i18next-internationalization-success)
+![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
 
 ## Description
 
-**React Multi-Language App** is a **React application** demonstrating **multi-language support and dynamic language switching**. The app is built with **i18next internationalization library** and supports switching between languages in real time. It was created with **CodeSandbox** and focuses on clean structure, reusable components, and a simple localization setup.
+**React Multi-Language App** is a **React application** demonstrating **multi-language support, dynamic language switching, and a live text translator**. The UI internationalization is powered by **i18next**, and the translator uses the free **MyMemory Translation API** to translate English text into the selected language in real time.
 
-This project is ideal as a **starter template for multilingual React apps**, useful for learning internationalization (i18n) with JSON language resources and React hooks.
+> 💡 **How the translator works**: type (or paste) **English text** in the input field, then pick a language from the **globe icon** in the top-right corner — the translated text appears instantly below the input.
+
+This project is ideal as a **starter template for multilingual React apps**, useful for learning internationalization (i18n) with JSON language resources, React hooks, and a modern Vite build setup.
 
 ---
 
@@ -21,7 +24,7 @@ This project is ideal as a **starter template for multilingual React apps**, use
 * [Installation](#installation)
 * [Usage](#usage)
 * [Project Structure](#project-structure)
-* [Deployment](#Deployment)
+* [Deployment](#deployment)
 * [License](#license)
 
 ---
@@ -29,7 +32,7 @@ This project is ideal as a **starter template for multilingual React apps**, use
 ## Preview
 
 **Live Demo:**  
-🔗https://multi-lang-translator.netlify.app/
+🔗 https://multi-lang-translator.netlify.app/
 
 ---
 
@@ -41,65 +44,83 @@ This project is ideal as a **starter template for multilingual React apps**, use
 
 ## Features
 
-* 🌐 **Multi-Language Support** – Support for multiple languages with dynamic switching.
-* 🔁 **Real-Time Language Change** – Switch languages without reloading the page.
-* 🧠 **i18next Integration** – Uses industry-standard internationalization library for React.
+* 🌐 **Multi-Language Support** – 6 languages: English, French, Arabic, Danish, Spanish, and Hindi.
+* 🔁 **Real-Time Language Change** – Switch languages without reloading the page; the whole UI (including the browser tab title) updates instantly.
+* 🧠 **i18next Integration** – Uses the industry-standard internationalization library for React with automatic language detection (cookie-based persistence).
+* 💬 **Text Translator** – Type **English** text, then select a target language from the globe dropdown to see the translation (powered by the free MyMemory API).
+* 🔄 **Re-translation on Switch** – Any text already in the input is automatically re-translated when you change the language.
 * 📦 **JSON Translation Files** – Easy to extend with additional languages.
-* 🧩 **Reusable Components** – Designed for clean, scalable component structure.
-* 🚀 **Instant Preview via CodeSandbox** – No local setup required.
+* 🚀 **Vite Build** – Fast dev server with HMR (hot module replacement) and optimized production builds.
 
 ---
 
 ## Technologies Used
 
-This project is built with the following core technologies:
-
-* **React** – Frontend library for building UI components.
+* **React 18** – Frontend library for building UI components.
 * **i18next + react-i18next** – Internationalization framework for managing translations.
-* **JavaScript** – Language used throughout the app.
-* **CSS** – For basic styling.
+* **Vite** – Modern build tool and dev server (replaces Create React App).
+* **MyMemory Translation API** – Free REST API used for the text translator.
+* **Bootstrap 5** – UI styling.
+* **Inline SVG flags** – Only the 6 needed country flags are bundled (no heavy flag library).
+* **js-cookie** – Persists the selected language in a browser cookie.
+* **JavaScript / JSX** – Language used throughout the app.
 
 ---
 
 ## Installation
+
+Requirements: **Node.js 18+** (Node 20 LTS recommended).
 
 To run this project locally:
 
 1. **Clone the repository**
 
 ```bash
-   git clone <repository-url>
-   cd react-multi-language-app
-````
+git clone <repository-url>
+cd react-multi-language-app
+```
 
 2. **Install dependencies**
 
 ```bash
-   npm install
+npm install
 ```
 
 3. **Start the development server**
 
 ```bash
-   npm start
+npm start
 ```
 
 4. **Open in browser**
 
-   The app will usually run on:
+The Vite dev server runs on:
 
 ```
-   http://localhost:3000
+http://localhost:3000
 ```
+
+> If port 3000 is already in use, Vite automatically tries the next available port (e.g. 3001) and prints the URL in the terminal.
 
 ---
 
 ## Usage
 
-Once running, the app will display UI text in the default language.
+### UI Language Switching
 
-* Use the language switcher (e.g., buttons or dropdown) to toggle between supported locales.
-* Text will update instantly based on selected language — no reload required.
+* The app loads in the language saved in your browser (first visit defaults to **English**).
+* Click the **globe icon** in the top-right corner to open the language dropdown.
+* Pick any language — the UI text (title, welcome message, day counter, language label) updates **instantly**, no reload required.
+* **Arabic** automatically switches the entire page to **right-to-left (RTL)** layout.
+
+### Text Translator
+
+1. Type **English text** into the *Text Translator* input field (e.g. `Hello, how are you?`).
+2. Select your target language from the **globe dropdown** (e.g. French 🏴, Spanish 🇪🇸, Danish 🇩🇰, Arabic 🇸🇦, Hindi 🇮🇳).
+3. The **Translated text** box shows the translation in the selected language shortly after you make your choice.
+4. Type new English text or switch to another language — the translation updates automatically.
+
+> **Note:** The translator translates **from English** into the selected language. If English is selected, the input text is echoed as-is (no translation needed). The MyMemory API is a free public service; uncommon words or long phrases may translate less accurately.
 
 ---
 
@@ -108,13 +129,17 @@ Once running, the app will display UI text in the default language.
 ```
 react-multi-language-app/
 │
-├── public/                 # Static public assets
+├── index.html              # Vite entry point (HTML shell)
+├── vite.config.js          # Vite configuration (dev port 3000, build → build/)
+├── public/                 # Static assets copied as-is into the build
+│   ├── _redirects          # Netlify SPA rewrite rule
+│   ├── manifest.json       # Web app manifest
+│   ├── flags/              # Country flag SVGs (one per supported language)
+│   └── assets/locales/     # JSON translation files ({en,fr,ar,da,es,hi}/translation.json)
 ├── src/
-│   ├── components/         # React components
-│   ├── locales/            # JSON language files
-│   ├── i18n.js             # i18next configuration
-│   ├── App.js              # Main app component
-│   └── index.js            # Entry point
+│   ├── App.jsx             # Main component (language switcher + text translator)
+│   ├── index.jsx           # Entry point + i18next configuration
+│   └── styles.css          # Base styling
 │
 ├── package.json            # Dependencies & scripts
 └── README.md               # This documentation
@@ -132,7 +157,7 @@ This project is deployed using **Netlify with GitHub continuous deployment**.
 2. On every push to the `main` branch:
 
    * Netlify runs `npm install`
-   * Netlify runs `npm run build`
+   * Netlify runs `npm run build` (Vite → produces `build/`)
    * Netlify publishes the app from the `build/` directory
 
 ### Netlify Build Settings
@@ -143,8 +168,6 @@ This project is deployed using **Netlify with GitHub continuous deployment**.
 | **Publish Directory** | `build`         |
 
 ### Deploying Updates
-
-To deploy new changes:
 
 ```bash
 git add .
